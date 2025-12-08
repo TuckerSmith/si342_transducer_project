@@ -4,6 +4,14 @@ if __name__ == "__main__":
     frgui = open("fromGUI","r")
     togui = open("toGUI","w")
     count = 0
+
+    # states
+    Start = True
+    TMenuOpen = False
+    NoMenu = False
+    RMenuOpen = False
+    TextBoxSelected = False
+    CheckTextBox = False
     while True:
         # Read event message
         try:
@@ -19,10 +27,47 @@ if __name__ == "__main__":
         #   and when you leave the "canvas", it disappears.  See why?
         response = "noop 0"
         match msg:
-            case 'mouseDownVertex':
-                response = "showCP " + data
-            case 'mouseLeaveCanvas':
-                response = "hideCP " + data
+            case 'documentReady':
+                Start = False
+                NoMenu = True
+            case 'click':
+                if TMenuOpen:
+                    response = "hideTP " + data
+                    TMenuOpen = False
+                    NoMenu = True
+                elif RMenuOpen:
+                    response = "hideCP " + data
+                    RMenuOpen = False
+                    NoMenu = True
+            case 'clickOnCanvas':
+                if TMenuOpen:
+                    response = "hideTP " + data
+                    TMenuOpen = False
+                    NoMenu = True
+                elif RMenuOpen:
+                    response = "moveC " + data + '\n' + "hideCP " + data  #this one is weird
+                    RMenuOpen = False
+                    NoMenu = True
+            case 'clickTriChooseButton':
+                response = "showTP " + data
+                TMenuOpen = True
+                NoMenu = False
+            case 'clickRecenterButton':
+                if NoMenu:
+                    RMenuOpen = True
+                    NoMenu = False
+                    response = "showCP " + data
+    
+                elif TMenuOpen:
+                    response = "hideTP " + data + "\n" + "showCP " + data
+                    TMenuOpen = False
+                    NoMenu = True
+                elif RMenuOpen:
+                    response = "hideCP " + data
+                    RMenuOpen = False
+                    NoMenu = True
+
+            # default
             case _:
                 print(f'No handler for: {msg}',file=sys.stderr)
         
