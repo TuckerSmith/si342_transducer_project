@@ -2,6 +2,9 @@
 
 ## Group Members
 (1) the names and alphas of your group members, 
+Tucker Smith (265922)
+Audrey Shu (275886)
+Carter Chazez (271056)
 
 ## Compilation
 (2) instructions on how to compile your program, 
