@@ -6,20 +6,14 @@ if __name__ == "__main__":
     count = 0
 
     # states
-    Start = True
     TMenuOpen = False
-    NoMenu = False
     RMenuOpen = False
-    TextBoxSelected = False
-    CheckTextBox = False
-    
+    NoMenu = False
     HoldingVertex = False
     OGCoords = None
-    CurCoords = None
     
     #error msg
     errormsg = "ERROR! Unexpected event message {eventMessage} while in state {i}"
-    # print(errormsg.format("ex1", "ex2"))
     
     while True:
         # Read event message
@@ -30,14 +24,9 @@ if __name__ == "__main__":
         count += 1
         print(f'Read({count}): {msg} {data}',file=sys.stderr) #4DEBUG!
 
-        # Choose action message to respond with
-        # IMPORTANT! My example code does something silly ...
-        # - if you click on a vertex, the "Recentering Pane" will appear,
-        #   and when you leave the "canvas", it disappears.  See why?
         response = "noop 0"
         match msg:
             case 'documentReady':
-                Start = False
                 NoMenu = True
             case 'click':
                 if TMenuOpen:
@@ -50,13 +39,13 @@ if __name__ == "__main__":
                     NoMenu = True
             case 'clickOnCanvas':
                 if HoldingVertex:
-                    HoldingVertex = False         ###add something for selectedvertex here 
+                    HoldingVertex = False
                 if TMenuOpen:
                     response = "hideTP " + data
                     TMenuOpen = False
                     NoMenu = True
                 elif RMenuOpen:
-                    response = "moveC " + data + '\n' + "hideCP " + data  #this one is weird
+                    response = "moveC " + data + '\n' + "hideCP " + data
                     RMenuOpen = False
                     NoMenu = True
             case 'clickTriChooseButton':              
@@ -100,12 +89,10 @@ if __name__ == "__main__":
             case 'clickRecenterTextBox':
                 if NoMenu:
                     print(errormsg.format("ClickRecenterTextBox", "NoMenu"), file=sys.stderr)
-                    # error
                     pass    
                 elif TMenuOpen:
                     print(errormsg.format("ClickRecenterTextBox", "TMenuOpen"), file=sys.stderr)
                 elif RMenuOpen:
-                    # nothing
                     pass
             case 'clickTriTypeChoice':
                 if NoMenu:
@@ -153,16 +140,10 @@ if __name__ == "__main__":
                     response = "moveC " + data + "\n" + "hideCP " + data
                     RMenuOpen = False
                     NoMenu = True
-            
-            
             # default
             case _:
                 print(f'No handler for: {msg}',file=sys.stderr)
-        #NOT IMPLEMENTED
-        """
-            
-            
-        """
+
         # Respond to GUI - flush to send line immediately!
         print(response + "\n",file=togui,flush=True)
         print(f'Sent({count}): {response}',file=sys.stderr) #4DEBUG!
