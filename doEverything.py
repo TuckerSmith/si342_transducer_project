@@ -66,11 +66,43 @@ if __name__ == "__main__":
                     response = "hideCP " + data
                     RMenuOpen = False
                     NoMenu = True
+            # not implemented
+            case 'clickRecenterPane':
+                if NoMenu:
+                    pass    
+                elif TMenuOpen:
+                    pass
+                elif RMenuOpen:
+                    pass
 
+
+            
             # default
             case _:
                 print(f'No handler for: {msg}',file=sys.stderr)
-        
+        #NOT IMPLEMENTED
+        """
+        case 'clickRecenterTextBox':
+            pass
+        case 'clickTriTypeChoice':
+            pass
+        case 'mouseDownVertex':
+            pass
+        case 'mouseLeaveCanvas':
+            pass
+        case 'mouseMove':
+            pass
+        case 'mouseUpCanvas':
+            pass 
+        case 'recenterTextChange':
+            pass
+        case 'recenterTextFail':
+            pass
+        case 'recenterTextSucc':
+            pass
+        """
         # Respond to GUI - flush to send line immediately!
         print(response + "\n",file=togui,flush=True)
         print(f'Sent({count}): {response}',file=sys.stderr) #4DEBUG!
+
+        
