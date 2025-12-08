@@ -16,7 +16,6 @@ if __name__ == "__main__":
     HoldingVertex = False
     OGCoords = None
     CurCoords = None
-    CurVertex = ""
     
     #error msg
     errormsg = "ERROR! Unexpected event message {eventMessage} while in state {i}"
@@ -121,10 +120,7 @@ if __name__ == "__main__":
             case 'mouseDownVertex':
                 response = "selectV " + data
                 HoldingVertex = True
-                OGCoords = data
-                CurVertex = data.split(':', 1)[0]
-
-            ### this one isn't working right. if a vertex is currently being held, leaving the canvas should take it back to its original position
+                OGCoords = data.split(':', 1)[1]
             case 'mouseLeaveCanvas':
                 if HoldingVertex:
                     response = "moveV " + OGCoords
