@@ -12,6 +12,16 @@ if __name__ == "__main__":
     RMenuOpen = False
     TextBoxSelected = False
     CheckTextBox = False
+    
+    HoldingVertex = False
+    OGCoords = None
+    CurCoords = None
+    CurVertex = ""
+    
+    #error msg
+    errormsg = "ERROR! Unexpected event message {eventMessage} while in state {i}"
+    # print(errormsg.format("ex1", "ex2"))
+    
     while True:
         # Read event message
         try:
@@ -40,6 +50,8 @@ if __name__ == "__main__":
                     RMenuOpen = False
                     NoMenu = True
             case 'clickOnCanvas':
+                if HoldingVertex:
+                    HoldingVertex = False         ###add something for selectedvertex here 
                 if TMenuOpen:
                     response = "hideTP " + data
                     TMenuOpen = False
@@ -48,58 +60,112 @@ if __name__ == "__main__":
                     response = "moveC " + data + '\n' + "hideCP " + data  #this one is weird
                     RMenuOpen = False
                     NoMenu = True
-            case 'clickTriChooseButton':
-                response = "showTP " + data
-                TMenuOpen = True
-                NoMenu = False
+            case 'clickTriChooseButton':              
+                if NoMenu:
+                    response = "showTP " + data
+                    TMenuOpen = True
+                    NoMenu = False    
+                elif TMenuOpen:
+                    response = "hideTP " + data
+                    TMenuOpen = False
+                    NoMenu = True
+                elif RMenuOpen:
+                    response = "showTP " + data + '\n' + "hideCP " + data
+                    NoMenu = False
+                    RMenuOpen = False
+                    TMenuOpen = True
             case 'clickRecenterButton':
                 if NoMenu:
+                    response = "showCP " + data
                     RMenuOpen = True
                     NoMenu = False
-                    response = "showCP " + data
-    
                 elif TMenuOpen:
                     response = "hideTP " + data + "\n" + "showCP " + data
                     TMenuOpen = False
-                    NoMenu = True
+                    RMenuOpen = True
+                    NoMenu = False
                 elif RMenuOpen:
                     response = "hideCP " + data
                     RMenuOpen = False
                     NoMenu = True
-            # not implemented
             case 'clickRecenterPane':
                 if NoMenu:
+                    print(errormsg.format("ClickRecenterPane", "NoMenu"), file=sys.stderr)
+                    # error
                     pass    
                 elif TMenuOpen:
-                    pass
+                    print(errormsg.format("ClickRecenterPane", "TMenuOpen"), file=sys.stderr)
                 elif RMenuOpen:
+                    # nothing
                     pass
+            case 'clickRecenterTextBox':
+                if NoMenu:
+                    print(errormsg.format("ClickRecenterTextBox", "NoMenu"), file=sys.stderr)
+                    # error
+                    pass    
+                elif TMenuOpen:
+                    print(errormsg.format("ClickRecenterTextBox", "TMenuOpen"), file=sys.stderr)
+                elif RMenuOpen:
+                    # nothing
+                    pass
+            case 'clickTriTypeChoice':
+                if NoMenu:
+                    print(errormsg.format("ClickTriTypeChoice", "NoMenu"), file=sys.stderr)
+                elif TMenuOpen:
+                    response = "resetT " + data + "\n" + "hideTP " + data
+                    TMenuOpen = False
+                    RMenuOpen = False
+                    NoMenu = True
+                elif RMenuOpen:
+                    print(errormsg.format("ClickTriTypeChoice", "RMenuOpen"), file=sys.stderr)
+            case 'mouseDownVertex':
+                response = "selectV " + data
+                HoldingVertex = True
+                OGCoords = data
+                CurVertex = data.split(':', 1)[0]
 
-
+            ### this one isn't working right. if a vertex is currently being held, leaving the canvas should take it back to its original position
+            case 'mouseLeaveCanvas':
+                if HoldingVertex:
+                    response = "moveV " + OGCoords
+                    HoldingVertex = False
+            case 'mouseMove':
+                if HoldingVertex:
+                    response = "moveV " + data            
+            case 'mouseUpCanvas':
+                HoldingVertex = False 
+            case 'recenterTextChange':
+                if NoMenu:
+                    print(errormsg.format("recenterTextChange", "NoMenu"), file=sys.stderr)
+                elif TMenuOpen:
+                    print(errormsg.format("recenterTextChange", "TMenuOpen"), file=sys.stderr)
+                elif RMenuOpen:
+                    response = "checkCT " + data
+            case 'recenterTextFail':
+                if NoMenu:
+                    print(errormsg.format("recenterTextFail", "NoMenu"), file=sys.stderr)
+                elif TMenuOpen:
+                    print(errormsg.format("recenterTextFail", "TMenuOpen"), file=sys.stderr)
+                elif RMenuOpen:
+                    response = "errorCT " + data
+            case 'recenterTextSucc':
+                if NoMenu:
+                    print(errormsg.format("recenterTextSucc", "NoMenu"), file=sys.stderr)
+                elif TMenuOpen:
+                    print(errormsg.format("recenterTextSucc", "TMenuOpen"), file=sys.stderr)
+                elif RMenuOpen:
+                    response = "moveC " + data + "\n" + "hideCP " + data
+                    RMenuOpen = False
+                    NoMenu = True
+            
             
             # default
             case _:
                 print(f'No handler for: {msg}',file=sys.stderr)
         #NOT IMPLEMENTED
         """
-        case 'clickRecenterTextBox':
-            pass
-        case 'clickTriTypeChoice':
-            pass
-        case 'mouseDownVertex':
-            pass
-        case 'mouseLeaveCanvas':
-            pass
-        case 'mouseMove':
-            pass
-        case 'mouseUpCanvas':
-            pass 
-        case 'recenterTextChange':
-            pass
-        case 'recenterTextFail':
-            pass
-        case 'recenterTextSucc':
-            pass
+            
+            
         """
         # Respond to GUI - flush to send line immediately!
         print(response + "\n",file=togui,flush=True)
