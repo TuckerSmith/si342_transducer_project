@@ -10,6 +10,7 @@ if __name__ == "__main__":
     RMenuOpen = False
     NoMenu = False
     HoldingVertex = False
+    
     OGCoords = None
     
     #error msg
