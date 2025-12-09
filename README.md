@@ -17,4 +17,4 @@ in order to run the working Triangle App and its supporting controller, you must
 ```./run.sh```
 
 ## Description of Testing
-(4) a paragraph describing, in detail, how you tested your program and why you think that testing was good enough for you to believe your program is correct (if you don't think it is correct, list the bugs you are aware of)
+We went through each event-message for each of our states that we created in part 2. Through this process, it allowed us to see every possible scenario in each state which helped catch certain cases we did not find initially. This in depth testing of our program makes us feel confident that our program is correct. We realized that the only connection the canvas and the rest of the window had is when the recenterPane is open and the user clicks the canvas, besides this they are separate parts.
